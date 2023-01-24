@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("api/v1/user/")
+@RequestMapping("api/v1/user")
 public class UserController {
 
     private final UserService userService;
@@ -24,7 +24,7 @@ public class UserController {
         return userService.getAllUser();
     }
 
-    @GetMapping(path = "{id}")
+    @GetMapping(path = "/{id}")
     public Optional<User> getCurrentUser(@PathVariable("id") long id){
         return userService.getUserById(id);
     }

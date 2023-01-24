@@ -3,28 +3,22 @@ package com.manish.contactmanager.service;
 import com.manish.contactmanager.dao.UserRepository;
 import com.manish.contactmanager.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
     public UserService(UserRepository userRepository){
         this.userRepository = userRepository;
-    }
-
-    public String addUserService(User user){
-        if(!userRepository.findByEmail(user.getEmail()).isEmpty()){
-            return "User already exist";
-        }
-
-        userRepository.save(user);
-        return "User Registered";
+        this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
     public List<User> getAllUser() {
@@ -33,5 +27,29 @@ public class UserService {
 
     public Optional<User> getUserById(long id) {
         return userRepository.findById(id);
+    }
+
+    public String addUserService(User user){
+        if(!userRepository.findByEmail(user.getEmail()).isEmpty()){
+            return "User already exist";
+        }
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+        return "User Registered";
+    }
+
+    public String loginUserService(Map<String,String> credential) {
+        if(userRepository.findByEmail(credential.get("email")).isEmpty()){
+            return "User dose not exist";
+        }
+
+        User currentUser = userRepository.findByEmail(credential.get("email")).get(0);
+
+        if(passwordEncoder.matches(credential.get("password"),currentUser.getPassword())){
+            return "User logged in";
+        }
+
+        return "Invalid credential";
     }
 }

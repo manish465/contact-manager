@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
-@RequestMapping("api/v1/")
+@RequestMapping("api/v1")
 public class HomeController {
 
     private final UserService userService;
@@ -19,8 +21,13 @@ public class HomeController {
         this.userService = userService;
     }
 
-    @PostMapping("signup")
+    @PostMapping("/signup")
     public String signUp(@RequestBody User user){
         return userService.addUserService(user);
+    }
+
+    @PostMapping("/signin")
+    public String signIn(@RequestBody Map<String,String> credential){
+        return userService.loginUserService(credential);
     }
 }
