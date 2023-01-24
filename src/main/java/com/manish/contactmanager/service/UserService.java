@@ -40,11 +40,11 @@ public class UserService {
     }
 
     public String loginUserService(Map<String,String> credential) {
-        if(userRepository.findByEmail(credential.get("email")).isEmpty()){
+        User currentUser = userRepository.findByEmail(credential.get("email")).get(0);
+
+        if(currentUser.getEmail() == null){
             return "User dose not exist";
         }
-
-        User currentUser = userRepository.findByEmail(credential.get("email")).get(0);
 
         if(passwordEncoder.matches(credential.get("password"),currentUser.getPassword())){
             return "User logged in";
