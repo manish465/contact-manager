@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("api/v1/user")
+@RequestMapping
 public class UserController {
 
     private final UserService userService;
@@ -19,17 +19,17 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping
+    @GetMapping("api/v1/user")
     public List<User> getAllRegisteredUsers(){
         return userService.getAllUser();
     }
 
-    @GetMapping(path = "{id}")
+    @GetMapping(path = "api/v1/user/{id}")
     public Optional<User> getCurrentUser(@PathVariable("id") long id){
         return userService.getUserById(id);
     }
 
-    @PostMapping("/signup")
+    @PostMapping("api/v1/signup")
     public String signUp(@RequestBody User user){
         return userService.addUserService(user);
     }
