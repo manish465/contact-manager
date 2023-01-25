@@ -2,8 +2,6 @@ package com.manish.contactmanager.model;
 
 import jakarta.persistence.*;
 
-import java.util.UUID;
-
 @Entity
 @Table(name = "USER", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 public class User {

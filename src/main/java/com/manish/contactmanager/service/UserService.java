@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -14,10 +15,12 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private BCryptPasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder tokenObject;
 
     @Autowired
     public UserService(UserRepository userRepository){
         this.userRepository = userRepository;
+        this.tokenObject = new BCryptPasswordEncoder();
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
@@ -29,27 +32,54 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-    public String addUserService(User user){
+    public Map<String,Object> addUserService(User user){
         if(!userRepository.findByEmail(user.getEmail()).isEmpty()){
-            return "User already exist";
+            Map<String,Object> res = new HashMap<>();
+
+            res.put("code",400);
+            res.put("msg","User already exist");
+
+            return res;
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
-        return "User Registered";
+
+        Map<String,Object> res = new HashMap<>();
+
+        res.put("code",200);
+        res.put("msg","User registed");
+
+        return res;
     }
 
-    public String loginUserService(Map<String,String> credential) {
+    public Map<String,Object> loginUserService(Map<String,String> credential) {
         User currentUser = userRepository.findByEmail(credential.get("email")).get(0);
 
         if(currentUser.getEmail() == null){
-            return "User dose not exist";
+            Map<String,Object> res = new HashMap<>();
+
+            res.put("code",400);
+            res.put("msg","User dose not exist");
+
+            return res;
         }
 
         if(passwordEncoder.matches(credential.get("password"),currentUser.getPassword())){
-            return "User logged in";
+            Map<String,Object> res = new HashMap<>();
+
+            res.put("code",200);
+            res.put("token",tokenObject.encode(Long.toString(currentUser.getUserId())));
+            res.put("msg","User logged in");
+
+            return res;
         }
 
-        return "Invalid credential";
+        Map<String,Object> res = new HashMap<>();
+
+        res.put("code",400);
+        res.put("token","Invalid credential");
+
+        return res;
     }
 }

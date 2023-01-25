@@ -22,12 +22,12 @@ public class HomeController {
     }
 
     @PostMapping("/signup")
-    public String signUp(@RequestBody User user){
+    public Map<String,Object> signUp(@RequestBody User user){
         return userService.addUserService(user);
     }
 
     @PostMapping("/signin")
-    public String signIn(@RequestBody Map<String,String> credential){
+    public Map<String,Object> signIn(@RequestBody Map<String,String> credential){
         return userService.loginUserService(credential);
     }
 }
