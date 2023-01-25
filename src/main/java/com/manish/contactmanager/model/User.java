@@ -2,6 +2,8 @@ package com.manish.contactmanager.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "USER", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 public class User {
@@ -9,15 +11,15 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private long userId;
-
     @Column(name = "first_name")
     private String firstName;
-
     @Column(name = "last_name")
     private String lastName;
     private String email;
     private String password;
     private String role;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Contact> contacts;
 
     public User() {
     }
@@ -78,4 +80,24 @@ public class User {
         this.role = role;
     }
 
+    public List<Contact> getContacts() {
+        return contacts;
+    }
+
+    public void setContacts(List<Contact> contacts) {
+        this.contacts = contacts;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", role='" + role + '\'' +
+                ", contacts=" + contacts +
+                '}';
+    }
 }
