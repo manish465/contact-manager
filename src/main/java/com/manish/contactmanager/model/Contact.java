@@ -1,16 +1,18 @@
 package com.manish.contactmanager.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 
 import java.util.List;
 
 @Entity
 @Table(name = "CONTACT", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Contact {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "contact_id")
-    private long contactId;
+    private long id;
     @Column(name = "first_name")
     private String firstName;
     @Column(name = "last_name")
@@ -34,12 +36,12 @@ public class Contact {
         this.description = description;
     }
 
-    public long getContactId() {
-        return contactId;
+    public long getId() {
+        return id;
     }
 
-    public void setContactId(long contactId) {
-        this.contactId = contactId;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getFirstName() {
@@ -101,7 +103,7 @@ public class Contact {
     @Override
     public String toString() {
         return "Contact{" +
-                "contactId=" + contactId +
+                "contactId=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +

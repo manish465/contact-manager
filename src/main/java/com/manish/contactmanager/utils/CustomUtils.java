@@ -27,12 +27,11 @@ public class CustomUtils {
         long currentUserId = -1;
 
         for (User user:userList) {
-            if(tokenObject.matches(Long.toString(user.getUserId()),token))
-                currentUserId = user.getUserId();
+            if(tokenObject.matches(Long.toString(user.getId()),token))
+                currentUserId = user.getId();
         }
 
         if(currentUserId == -1){
-            System.out.println("called");
             Map<String,Object> res = new HashMap<>();
 
             res.put("code",400);

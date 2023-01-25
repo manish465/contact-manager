@@ -8,7 +8,7 @@ public class Work {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "work_id")
-    private long workId;
+    private long id;
     @Column(name = "company_name")
     private String companyName;
     @Column(name = "job_designation")
@@ -24,12 +24,12 @@ public class Work {
         this.jobDesignation = jobDesigantion;
     }
 
-    public long getWorkId() {
-        return workId;
+    public long getId() {
+        return id;
     }
 
-    public void setWorkId(long workId) {
-        this.workId = workId;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getCompanyName() {
@@ -59,7 +59,7 @@ public class Work {
     @Override
     public String toString() {
         return "Work{" +
-                "workId=" + workId +
+                "workId=" + id +
                 ", companyName='" + companyName + '\'' +
                 ", jobDesignation='" + jobDesignation + '\'' +
                 ", contact=" + contact +

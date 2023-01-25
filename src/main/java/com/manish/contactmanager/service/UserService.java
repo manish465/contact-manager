@@ -95,7 +95,7 @@ public class UserService {
             Map<String,Object> res = new HashMap<>();
 
             res.put("code",200);
-            res.put("token",tokenObject.encode(Long.toString(currentUser.getUserId())));
+            res.put("token",tokenObject.encode(Long.toString(currentUser.getId())));
             res.put("msg","User logged in");
 
             return res;
@@ -148,7 +148,7 @@ public class UserService {
 
         Optional<User> currentUser = userRepository.findById(id);
         if(currentUser.isPresent()){
-            userRepository.deleteById(currentUser.get().getUserId());
+            userRepository.deleteById(currentUser.get().getId());
 
             res = new HashMap<>();
 

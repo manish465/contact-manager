@@ -9,7 +9,7 @@ public class PhoneNumber {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "phone_id")
-    private long phoneId;
+    private long id;
 
     @Column(name = "country_code")
     private String countryCode;
@@ -27,12 +27,12 @@ public class PhoneNumber {
         this.type = type;
     }
 
-    public long getPhoneId() {
-        return phoneId;
+    public long getId() {
+        return id;
     }
 
-    public void setPhoneId(long phoneId) {
-        this.phoneId = phoneId;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getCountryCode() {
@@ -70,7 +70,7 @@ public class PhoneNumber {
     @Override
     public String toString() {
         return "PhoneNumber{" +
-                "phoneId=" + phoneId +
+                "phoneId=" + id +
                 ", countryCode='" + countryCode + '\'' +
                 ", number='" + number + '\'' +
                 ", type='" + type + '\'' +
