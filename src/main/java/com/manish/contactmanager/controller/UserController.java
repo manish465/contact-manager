@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -20,8 +21,8 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getAllRegisteredUsers(){
-        return userService.getAllUser();
+    public Map<String,Object> getAllRegisteredUsers(@RequestHeader(value="Authorization") String authorizationHeader){
+        return userService.getAllUser(authorizationHeader);
     }
 
     @GetMapping(path = "/{id}")
