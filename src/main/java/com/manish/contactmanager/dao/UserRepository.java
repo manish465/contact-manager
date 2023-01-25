@@ -11,8 +11,4 @@ import java.util.UUID;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     public List<User> findByEmail(String email);
-
-    public default User getUserByUsername(@Param("email") String email){
-        return findByEmail(email).get(0);
-    }
 }

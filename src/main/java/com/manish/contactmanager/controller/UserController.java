@@ -25,8 +25,8 @@ public class UserController {
     }
 
     @GetMapping(path = "/{id}")
-    public Optional<User> getCurrentUser(@PathVariable("id") long id){
-        return userService.getUserById(id);
+    public Map<String,Object> getCurrentUser(@PathVariable("id") long id, @RequestHeader(value="Authorization") String authorizationHeader){
+        return userService.getUserById(id,authorizationHeader);
     }
 
     @PostMapping("/signup")
@@ -39,4 +39,15 @@ public class UserController {
         return userService.loginUserService(credential);
     }
 
+    @PutMapping(path = "/{id}")
+    public Map<String,Object> updateUserById(@PathVariable("id") long id,
+                                             @RequestBody Map<String,String> newUserCred,
+                                             @RequestHeader(value="Authorization") String authorizationHeader){
+        return userService.updateUserService(id,newUserCred, authorizationHeader);
+    }
+
+    @DeleteMapping(path = "/{id}")
+    public Map<String, Object> deleteUserById(@PathVariable("id") long id, @RequestHeader(value="Authorization") String authorizationHeader){
+        return userService.deleteUserService(id,authorizationHeader);
+    }
 }

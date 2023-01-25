@@ -15,7 +15,7 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final CustomUtils customUtils;
-    private BCryptPasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder;
     private final BCryptPasswordEncoder tokenObject;
 
 
@@ -41,8 +41,21 @@ public class UserService {
         return res;
     }
 
-    public Optional<User> getUserById(long id) {
-        return userRepository.findById(id);
+    public Map<String,Object> getUserById(long id, String authorizationHeader) {
+        Map<String,Object> res = customUtils.requireSignin(authorizationHeader,tokenObject,"any");
+        if(res != null) {
+            return res;
+        }
+
+        Optional<User> currentUser = userRepository.findById(id);
+        currentUser.get().setPassword("");
+
+        res = new HashMap<>();
+
+        res.put("code", 200);
+        res.put("data", currentUser.get());
+
+        return res;
     }
 
     public Map<String,Object> addUserService(User user){
@@ -92,6 +105,63 @@ public class UserService {
 
         res.put("code",400);
         res.put("token","Invalid credential");
+
+        return res;
+    }
+
+    public Map<String, Object> updateUserService(long id,Map<String, String> credential, String authorizationHeader) {
+        Map<String,Object> res = customUtils.requireSignin(authorizationHeader,tokenObject,"any");
+        if(res != null) {
+            return res;
+        }
+
+        Optional<User> currentUser = userRepository.findById(id);
+
+        if(currentUser.isPresent()){
+            currentUser.get().setFirstName(credential.get("first_name"));
+            currentUser.get().setLastName(credential.get("last_name"));
+            currentUser.get().setEmail(credential.get("email"));
+
+            userRepository.save(currentUser.get());
+
+            res = new HashMap<>();
+
+            res.put("code", 200);
+            res.put("msg","User updated");
+
+            return res;
+        }
+
+        res = new HashMap<>();
+
+        res.put("code", 400);
+        res.put("msg", "User dose not exist");
+
+        return res;
+    }
+
+    public Map<String, Object> deleteUserService(long id, String authorizationHeader) {
+        Map<String,Object> res = customUtils.requireSignin(authorizationHeader,tokenObject,"admin");
+        if(res != null) {
+            return res;
+        }
+
+        Optional<User> currentUser = userRepository.findById(id);
+        if(currentUser.isPresent()){
+            userRepository.deleteById(currentUser.get().getUserId());
+
+            res = new HashMap<>();
+
+            res.put("code", 400);
+            res.put("msg", "User deleted");
+
+            return res;
+        }
+
+        res = new HashMap<>();
+
+        res.put("code", 400);
+        res.put("msg", "User dose not exist");
 
         return res;
     }
