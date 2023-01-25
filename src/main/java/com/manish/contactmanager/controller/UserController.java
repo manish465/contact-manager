@@ -5,7 +5,6 @@ import com.manish.contactmanager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -28,6 +27,16 @@ public class UserController {
     @GetMapping(path = "/{id}")
     public Optional<User> getCurrentUser(@PathVariable("id") long id){
         return userService.getUserById(id);
+    }
+
+    @PostMapping("/signup")
+    public Map<String,Object> signUp(@RequestBody User user){
+        return userService.addUserService(user);
+    }
+
+    @PostMapping("/signin")
+    public Map<String,Object> signIn(@RequestBody Map<String,String> credential){
+        return userService.loginUserService(credential);
     }
 
 }
