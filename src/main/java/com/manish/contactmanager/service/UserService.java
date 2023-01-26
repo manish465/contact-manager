@@ -96,6 +96,7 @@ public class UserService {
 
             res.put("code",200);
             res.put("token",tokenObject.encode(Long.toString(currentUser.getId())));
+            res.put("id", currentUser.getId());
             res.put("msg","User logged in");
 
             return res;
