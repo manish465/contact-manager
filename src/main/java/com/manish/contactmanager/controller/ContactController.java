@@ -17,15 +17,28 @@ public class ContactController {
     }
 
     @GetMapping(path = "/{id}")
-    public Map<String, Object> getAllContactFromGivenUserId(@PathVariable("id") long id, @RequestHeader(value="Authorization") String authorizationHeader){
+    public Map<String, Object> getAllContactFromGivenUserId(@PathVariable("id") long id,
+                                                            @RequestHeader(value="Authorization") String authorizationHeader){
         return this.contactService.getAllContactByUserIdService(id,authorizationHeader);
     }
 
     @PostMapping("/{id}")
-    @ResponseBody
     public Map<String, Object> addConatctByUserId(@PathVariable("id") long id,
                                                   @RequestHeader(value="Authorization") String authorizationHeader,
                                                   @RequestBody Map<String,Object> data){
         return this.contactService.addContactById(id,authorizationHeader,data);
+    }
+
+    @PutMapping("/{userId}/{contactId}")
+    public Map<String, Object> updateConatctByUserId(@PathVariable("userId") long userId,@PathVariable("contactId") long contactId,
+                                                  @RequestHeader(value="Authorization") String authorizationHeader,
+                                                  @RequestBody Map<String,Object> data){
+        return this.contactService.updateContactById(userId,contactId,authorizationHeader,data);
+    }
+
+    @DeleteMapping("/{userId}/{contactId}")
+    public Map<String, Object> deleteConatctByUserId(@PathVariable("userId") long userId,@PathVariable("contactId") long contactId,
+                                                     @RequestHeader(value="Authorization") String authorizationHeader){
+        return this.contactService.deleteContactById(userId,contactId,authorizationHeader);
     }
 }

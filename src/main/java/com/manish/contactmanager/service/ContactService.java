@@ -87,4 +87,55 @@ public class ContactService {
 
         return res;
     }
+
+    public Map<String, Object> updateContactById(long userId, long contactId, String authorizationHeader, Map<String, Object> data) {
+        Map<String,Object> res = customUtils.requireSignin(authorizationHeader,tokenObject,"normal");
+        if(res != null) {
+            return res;
+        }
+
+        List<Contact> contacts = contactRepository.getAllContactsByUserId(userId);
+
+        Contact curretContact = contacts.stream().filter(c -> c.getId() == contactId).findFirst().get();
+
+        Work currentWork = new Work((String) data.get("companyName"), (String) data.get("jobDesignation"));
+        List<PhoneNumber> currentPhoneNumbers = new ArrayList<>();
+
+        for(Map<String,String> phoneNumber : (List<Map<String,String>>) data.get("phoneNumbers")){
+            currentPhoneNumbers.add(new PhoneNumber(phoneNumber.get("countryCode"),
+                    phoneNumber.get("number"),phoneNumber.get("type")));
+        }
+
+        curretContact.setWork(currentWork);
+        curretContact.setPhoneNumbers(currentPhoneNumbers);
+        curretContact.setFirstName((String) data.get("firstName"));
+        curretContact.setLastName((String) data.get("lastName"));
+        curretContact.setEmail((String) data.get("email"));
+        curretContact.setDescription((String) data.get("description"));
+
+        contactRepository.save(curretContact);
+
+        res = new HashMap<>();
+
+        res.put("code", 200);
+        res.put("msg", "Contact Updated");
+
+        return res;
+    }
+
+    public Map<String, Object> deleteContactById(long userId, long contactId, String authorizationHeader) {
+        Map<String,Object> res = customUtils.requireSignin(authorizationHeader,tokenObject,"normal");
+        if(res != null) {
+            return res;
+        }
+
+        contactRepository.deleteById(contactId);
+
+        res = new HashMap<>();
+
+        res.put("code", 200);
+        res.put("msg", "Contact Deleted");
+
+        return res;
+    }
 }
