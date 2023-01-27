@@ -43,6 +43,7 @@ public class CustomUtils {
         Optional<User> currentUser = userRepository.findById(currentUserId);
 
         if(currentUser.isPresent()){
+            System.out.println(currentUser.get().getRole());
             if(!requiredRole.equals("any")){
                 if(!currentUser.get().getRole().equals(requiredRole)){
                     Map<String,Object> res = new HashMap<>();
