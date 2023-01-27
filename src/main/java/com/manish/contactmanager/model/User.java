@@ -8,7 +8,7 @@ import java.util.List;
 @Table(name = "USER", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "user_id")
     private long id;
     @Column(name = "first_name")

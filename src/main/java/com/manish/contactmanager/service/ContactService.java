@@ -47,7 +47,7 @@ public class ContactService {
         res = new HashMap<>();
 
         res.put("code", 200);
-        res.put("data", contactRepository.getAllContactsByUserId(id));
+        res.put("contacts", contactRepository.getAllContactsByUserId(id));
 
         return res;
     }

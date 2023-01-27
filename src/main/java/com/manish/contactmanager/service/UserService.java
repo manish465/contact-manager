@@ -176,11 +176,13 @@ public class UserService {
     }
 
     public Map<String, Object> deleteUserService(long id, String authorizationHeader) {
-        System.out.println("fuction called");
+        System.out.println("called");
         Map<String,Object> res = customUtils.requireSignin(authorizationHeader,tokenObject,"admin");
         if(res != null) {
             return res;
         }
+
+        System.out.println("auth passed");
 
         Optional<User> currentUser = userRepository.findById(id);
         if(currentUser.isPresent()){
@@ -188,7 +190,7 @@ public class UserService {
 
             res = new HashMap<>();
 
-            res.put("code", 400);
+            res.put("code", 200);
             res.put("msg", "User deleted");
 
             return res;
