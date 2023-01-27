@@ -8,6 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -36,31 +37,50 @@ public class UserService {
         res = new HashMap<>();
 
         res.put("code", 200);
-        res.put("data", userRepository.findAll().stream().toList());
+        res.put("users", userRepository.findAll().stream().toList());
 
         return res;
     }
 
     public Map<String,Object> getUserById(long id, String authorizationHeader) {
-        Map<String,Object> res = customUtils.requireSignin(authorizationHeader,tokenObject,"any");
-        if(res != null) {
+        Map<String,Object> res;
+
+        Optional<User> currentUser = userRepository.findById(id);
+        if(currentUser.isPresent()){
+            currentUser.get().setPassword("");
+
+            res = new HashMap<>();
+
+            res.put("code", 200);
+            res.put("user", currentUser.get());
+
             return res;
         }
 
-        Optional<User> currentUser = userRepository.findById(id);
-        currentUser.get().setPassword("");
-
         res = new HashMap<>();
 
-        res.put("code", 200);
-        res.put("data", currentUser.get());
+        res.put("code", 400);
+        res.put("msg", "invalid user");
 
         return res;
     }
 
     public Map<String,Object> addUserService(User user){
+        Map<String,Object> res;
+
+        if(user.getEmail().equals("") ||
+                user.getPassword().equals("") || user.getFirstName().equals("") ||
+                user.getLastName().equals("") || user.getRole().equals("")){
+            res = new HashMap<>();
+
+            res.put("code",400);
+            res.put("msg","Invalid input");
+
+            return res;
+        }
+
         if(!userRepository.findByEmail(user.getEmail()).isEmpty()){
-            Map<String,Object> res = new HashMap<>();
+            res = new HashMap<>();
 
             res.put("code",400);
             res.put("msg","User already exist");
@@ -71,7 +91,7 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
 
-        Map<String,Object> res = new HashMap<>();
+        res = new HashMap<>();
 
         res.put("code",200);
         res.put("msg","User registed");
@@ -80,28 +100,43 @@ public class UserService {
     }
 
     public Map<String,Object> loginUserService(Map<String,String> credential) {
-        User currentUser = userRepository.findByEmail(credential.get("email")).get(0);
+        Map<String,Object> res;
 
-        if(currentUser.getEmail() == null){
-            Map<String,Object> res = new HashMap<>();
+        if(credential.get("email").equals("") || credential.get("password").equals("")){
+            res = new HashMap<>();
 
             res.put("code",400);
-            res.put("msg","User dose not exist");
+            res.put("msg","Invalid input");
 
             return res;
         }
 
+        List<User> user = userRepository.findByEmail(credential.get("email"));
+
+        if(user.size() == 0){
+            res = new HashMap<>();
+
+            res.put("code",400);
+            res.put("msg","Invalid Input");
+
+            return res;
+        }
+
+        User currentUser = user.get(0);
+
         if(passwordEncoder.matches(credential.get("password"),currentUser.getPassword())){
-            Map<String,Object> res = new HashMap<>();
+            res = new HashMap<>();
 
             res.put("code",200);
-            res.put("token",tokenObject.encode(Long.toString(currentUser.getUserId())));
+            res.put("token",tokenObject.encode(Long.toString(currentUser.getId())));
+            res.put("id", currentUser.getId());
+            res.put("role", currentUser.getRole());
             res.put("msg","User logged in");
 
             return res;
         }
 
-        Map<String,Object> res = new HashMap<>();
+        res = new HashMap<>();
 
         res.put("code",400);
         res.put("token","Invalid credential");
@@ -141,6 +176,7 @@ public class UserService {
     }
 
     public Map<String, Object> deleteUserService(long id, String authorizationHeader) {
+        System.out.println("fuction called");
         Map<String,Object> res = customUtils.requireSignin(authorizationHeader,tokenObject,"admin");
         if(res != null) {
             return res;
@@ -148,7 +184,7 @@ public class UserService {
 
         Optional<User> currentUser = userRepository.findById(id);
         if(currentUser.isPresent()){
-            userRepository.deleteById(currentUser.get().getUserId());
+            userRepository.deleteById(currentUser.get().getId());
 
             res = new HashMap<>();
 
