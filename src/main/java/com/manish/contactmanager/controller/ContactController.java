@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("api/v1/contact")
+@RequestMapping("api/v1/contacts")
 public class ContactController {
     private final ContactService contactService;
 
@@ -16,27 +16,33 @@ public class ContactController {
         this.contactService = contactService;
     }
 
-    @GetMapping(path = "/{id}")
+    @GetMapping(path = "user/{id}")
     public Map<String, Object> getAllContactFromGivenUserId(@PathVariable("id") long id,
                                                             @RequestHeader(value="Authorization") String authorizationHeader){
         return this.contactService.getAllContactByUserIdService(id,authorizationHeader);
     }
 
-    @PostMapping("/{id}")
+    @GetMapping("user/{userId}/contact/{contactId}")
+    public Map<String, Object> getAContactFromContactId(@PathVariable("userId") long userId,@PathVariable("contactId") long contactId,
+                                                     @RequestHeader(value="Authorization") String authorizationHeader){
+        return this.contactService.getAContactByContactId(userId,contactId,authorizationHeader);
+    }
+
+    @PostMapping("user/{id}")
     public Map<String, Object> addConatctByUserId(@PathVariable("id") long id,
                                                   @RequestHeader(value="Authorization") String authorizationHeader,
                                                   @RequestBody Map<String,Object> data){
         return this.contactService.addContactById(id,authorizationHeader,data);
     }
 
-    @PutMapping("/{userId}/{contactId}")
+    @PutMapping("user/{userId}/contact/{contactId}")
     public Map<String, Object> updateConatctByUserId(@PathVariable("userId") long userId,@PathVariable("contactId") long contactId,
                                                   @RequestHeader(value="Authorization") String authorizationHeader,
                                                   @RequestBody Map<String,Object> data){
         return this.contactService.updateContactById(userId,contactId,authorizationHeader,data);
     }
 
-    @DeleteMapping("/{userId}/{contactId}")
+    @DeleteMapping("user/{userId}/contact/{contactId}")
     public Map<String, Object> deleteConatctByUserId(@PathVariable("userId") long userId,@PathVariable("contactId") long contactId,
                                                      @RequestHeader(value="Authorization") String authorizationHeader){
         return this.contactService.deleteContactById(userId,contactId,authorizationHeader);

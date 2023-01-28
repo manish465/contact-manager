@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ContactService {
@@ -135,6 +132,31 @@ public class ContactService {
 
         res.put("code", 200);
         res.put("msg", "Contact Deleted");
+
+        return res;
+    }
+
+    public Map<String, Object> getAContactByContactId(long userId, long contactId, String authorizationHeader) {
+        Map<String,Object> res = customUtils.requireSignin(authorizationHeader,tokenObject,"normal");
+        if(res != null) {
+            return res;
+        }
+
+        Optional<Contact> currentContact = contactRepository.findById(contactId);
+
+        if(currentContact.isPresent()){
+            res = new HashMap<>();
+
+            res.put("code", 200);
+            res.put("contact", currentContact.get());
+
+            return res;
+        }
+
+        res = new HashMap<>();
+
+        res.put("code", 400);
+        res.put("msg", "Contact dose not exist");
 
         return res;
     }
