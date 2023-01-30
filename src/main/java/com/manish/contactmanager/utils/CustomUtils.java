@@ -23,24 +23,20 @@ public class CustomUtils {
 
     public Map<String, Object> requireSignin(String header, BCryptPasswordEncoder tokenObject, String requiredRole){
         String token = header.substring(7);
-        List<User> userList = userRepository.findAll().stream().toList();
-        long currentUserId = -1;
+        List<User> userList = userRepository.findAll().stream().filter(user ->
+            tokenObject.matches(Long.toString(user.getId()), token)
+        ).toList();
 
-        for (User user:userList) {
-            if(tokenObject.matches(Long.toString(user.getId()),token))
-                currentUserId = user.getId();
-        }
-
-        if(currentUserId == -1){
+        if(userList.isEmpty()){
             Map<String,Object> res = new HashMap<>();
 
-            res.put("code",400);
+            res.put("code", 401);
             res.put("msg", "You are not authenticated");
 
             return res;
         }
 
-        Optional<User> currentUser = userRepository.findById(currentUserId);
+        Optional<User> currentUser = userRepository.findById(userList.get(0).getId());
 
         if(currentUser.isPresent()){
             if(!requiredRole.equals("any")){
