@@ -176,13 +176,10 @@ public class UserService {
     }
 
     public Map<String, Object> deleteUserService(long id, String authorizationHeader) {
-        System.out.println("called");
         Map<String,Object> res = customUtils.requireSignin(authorizationHeader,tokenObject,"admin");
         if(res != null) {
             return res;
         }
-
-        System.out.println("auth passed");
 
         Optional<User> currentUser = userRepository.findById(id);
         if(currentUser.isPresent()){
